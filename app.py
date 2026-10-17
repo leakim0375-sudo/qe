@@ -10,6 +10,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import urllib.error  # 원격 CSV 로드 실패(HTTP/네트워크) 처리용
 
 # ───────────────────────── 1. 데이터 로드 ─────────────────────────
 DATA_URL = (
@@ -37,10 +38,12 @@ def load_data(url: str, local: str = LOCAL_FILE) -> pd.DataFrame:
                 raise ValueError("데이터 행 수가 너무 적습니다.")
             st.success("원격 데이터를 불러왔습니다.")
             return df
-        except (UnicodeDecodeError, ValueError):
+        except (UnicodeDecodeError, ValueError, urllib.error.HTTPError, urllib.error.URLError):
+            # Google Drive가 접근 제한(로그인 요구 등)이면 다음 인코딩 시도
+            # → 마지막에 로컬 파일 폴백으로 전환
             continue
 
-    # 실패 시 로컬 파일 사용
+    # 원격 로드 실패 시 로컬 파일 사용
     try:
         df = pd.read_csv(local, encoding="utf-8-sig")
         st.info("원격 로드 실패 → 로컬 파일 'seoul_temperature.csv'를 사용합니다.")
