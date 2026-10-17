@@ -4,7 +4,7 @@
 - 연도별 평균기온 꺾은선 + 5년 이동평균 겹침 표시
 - 사이드바 연도 범위 슬라이더
 - 선택 구간 평균·최저·최고기온 표시
-실행: streamlit run streamlit_app.py
+실행: streamlit run app.py
 """
 
 import streamlit as st
